@@ -58,3 +58,19 @@ consultaBOT fue desarrollado por civic hackers para la "Consulta sobre el model 
 ** Licencia de consultaBOT:
 
 El código de consultaBOT se publica con licencia libre GNU GPL 3.0 para permitir su auditabilidad y su adaptación para el uso en cualquier consulta.
+
+
+## Variables de configuración
+
+- AWS_ACCESS_KEY_ID
+- AWS_SECRET_ACCESS_KEY
+- TELEGRAM_TOKEN
+- GDPR_BCC
+    - GDPR_BCC=gdpr@domain.es
+- SENDER_EMAIL
+    - E.g.  SENDER_EMAIL=user@email.es
+- VERIFY_DOMAIN
+    - E.g. VERIFY_DOMAIN=upv
+- CLOSING_DATETIME
+    - E.g. CLOSING_DATETIME="2018-12-12 17:25"
+
