@@ -2,7 +2,7 @@
 
 consultaBOT es un bot de Telegram (es decir, una aplicación de Telegram) diseñado para permitir la participacion en una consulta telemática de forma anónima, segura, fiable, transparente y libre.
 
-** Resumen de características de consultaBOT:
+## Resumen de características de consultaBOT:
 
 1. Sistema de votación anónimo.
 2. Verificación de participantes a través de correo electrónico.
@@ -11,7 +11,7 @@ consultaBOT es un bot de Telegram (es decir, una aplicación de Telegram) diseñ
 5. Código abierto para garantizar su auditabilidad.
 6. Publicado con licencia GNU-GPL para permitir su reutilización.
 
-** Características de consultaBOT:
+## Características de consultaBOT:
 
 - Objetivo: Permite al usuario la participación en una consulta compuesta por una o más preguntas (pudiendo plantearse un "itinerario" de preguntas diferente según las respuestas que vaya dando el participante).
 
@@ -31,7 +31,7 @@ consultaBOT es un bot de Telegram (es decir, una aplicación de Telegram) diseñ
 
 - Personalización: El organizador de la consulta puede personalizar el código del bot para adaptarlo a las necesidades de la consulta: preguntas, respuestas, quién puede participar, política de protección de datos...
 
-** Uso de consultaBOT para participar en una consulta:
+## Uso de consultaBOT para participar en una consulta:
 
 El participante solo necesita acceder a Telegram, buscar el bot de la consulta (por el nombre del bot) y seguir las instrucciones que recibirá del bot:
 
@@ -41,7 +41,7 @@ El participante solo necesita acceder a Telegram, buscar el bot de la consulta (
 4. El bot planteará las preguntas de la consulta. El participante elegirá sus respuestas.
 5. El bot repetirá las respuestas recibidas para que el participante confirme que sean correctas.
 
-** Uso de consultaBOT para organizar una consulta:
+## Uso de consultaBOT para organizar una consulta:
 
 El organizador de la consulta puede personalizar el código del bot para definir quién puede participar en la consulta.
 
@@ -51,11 +51,11 @@ El organizador deberá disponer de los siguientes medios para plantear su consul
 - Un servidor (o más, para réplicas) en el que alojar el bot durante la consulta.
 - Alguna forma de enviar mensajes (de correo electrónico) automáticos a los participantes (para enviarles su código de verificación).
 
-** Origen de consultaBOT:
+## Origen de consultaBOT:
 
 consultaBOT fue desarrollado por civic hackers para la "Consulta sobre el model d'estat a la Universitat Politècnica de València" (13D 2018) organizada por la Plataforma pel referèndum sobre el model d'estat a la Universitat Politècnica de València (http://twitter.com/ReferendumUPV). El bot nació para permitir la realización de una consulta organizada por y para la comunidad universitaria de la UPV, de forma telemática, anónima, segura, fiable, transparente y libre.
 
-** Licencia de consultaBOT:
+## Licencia de consultaBOT:
 
 El código de consultaBOT se publica con licencia libre GNU GPL 3.0 para permitir su auditabilidad y su adaptación para el uso en cualquier consulta.
 
