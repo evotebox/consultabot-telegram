@@ -1,0 +1,37 @@
+{
+  "name": "referendumupvbot",
+  "version": "0.0.1",
+  "description": "Referendum UPV bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/algope/ReferendumUPVbot.git"
+  },
+  "author": "Alejandro González",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/algope/ReferendumUPVbot/issues"
+  },
+  "homepage": "https://github.com/algope/ReferendumUPVbot#readme",
+  "dependencies": {
+    "aws-sdk": "^2.368.0",
+    "bcrypt": "^3.0.2",
+    "crypto-js": "^3.1.9-1",
+    "email-addresses": "^3.0.3",
+    "email-validator": "^2.0.4",
+    "email-verify": "^0.2.1",
+    "generate-password": "^1.4.1",
+    "moment": "^2.22.2",
+    "node-emoji": "^1.8.1",
+    "parse-domain": "^2.1.7",
+    "path": "^0.12.7",
+    "telegraf": "^3.25.0",
+    "telegraf-i18n": "^6.4.0",
+    "underscore": "^1.9.1",
+    "validator": "^10.9.0"
+  }
+}
