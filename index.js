@@ -344,15 +344,15 @@ verify.enter((ctx) => {
         vote2: ctx.session.vote2
     })), Extra.HTML().markup((m) =>
         m.inlineKeyboard([
-            m.callbackButton('Sí', 'Sí'),
-            m.callbackButton('No', 'No')
+            m.callbackButton('Sí', 'si_verify'),
+            m.callbackButton('No', 'no_verify')
         ])))
 });
 
 
 verify.on('callback_query', ctx => {
     console.log("[INFO] - Verifying");
-    if (_.isEqual("Sí", ctx.callbackQuery.data)) {
+    if (_.isEqual("si_verify", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("Sí");
 
         if (ctx.session.voterType === 0) {
@@ -411,13 +411,15 @@ verify.on('callback_query', ctx => {
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
 
-    } else {
+    } else if (_.isEqual("no_verify", ctx.callbackQuery.data)){
         ctx.answerCbQuery("No");
         if(!isTimeToClose()){
             ctx.scene.enter('vote1')
         }else{
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
+    } else{
+        ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedVote')))
     }
 
 });
