@@ -8,9 +8,7 @@ const TelegrafI18n = require('telegraf-i18n');
 const Extra = require('telegraf/extra');
 const Markup = require('telegraf/markup');
 const CryptoJS = require("crypto-js");
-const Bcrypt = require('bcrypt');
 const path = require('path');
-const Validator = require('validator');
 const EmailValidator = require("email-validator");
 const _ = require('underscore');
 const parseDomain = require("parse-domain");
@@ -73,9 +71,7 @@ greeter.enter((ctx) => {
         } else {
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
-
     });
-
 });
 ///////////////////////////////
 
@@ -91,7 +87,6 @@ email.on('message', (ctx) => {
         console.log("Format ERROR");
         ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedEmail')));
     }
-
 });
 ///////////////////////////////
 
@@ -227,23 +222,15 @@ verifyEmail.on('callback_query', ctx => {
                                 } else {
                                     ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
                                 }
-
                             }
-
                         })
-
                     }
-
                 } else {
                     //Email is not UPV nor authorised. Error and block.
                     ctx.reply(Emoji.emojify(ctx.i18n.t('emailNotCorrect')));
                 }
             })
-
-
         }
-
-
     } else if (answer === 'email_verify_no') {
         ctx.answerCbQuery("No");
         ctx.reply(Emoji.emojify(ctx.i18n.t('emailVerifyNo')));
