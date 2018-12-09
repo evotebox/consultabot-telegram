@@ -69,7 +69,7 @@ greeter.enter((ctx) => {
         user_name: ctx.from.first_name
     }))).then(function () {
         if(!isTimeToClose()){
-            ctx.scene.enter('email');
+            ctx.scene.enter('verifyEmail');
         }else{
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
@@ -78,6 +78,12 @@ greeter.enter((ctx) => {
 
 });
 ///////////////////////////////
+
+
+////////////////////////////// Verify email scene
+const verifyEmail = new Scene('verifyEmail');
+verifyEmail.on
+
 
 
 /////////////////////////////// Email Scene
@@ -94,68 +100,26 @@ email.on('message', (ctx) => {
         let cypEmail = CryptoJS.SHA3(ctx.message.text);
         let cypEmailUser = CryptoJS.SHA3(emailUser);
 
-        let docClient = new AWS.DynamoDB;
-        let query = {
-            TableName: "voter_email",
-            Key: {
-                'user': {"S": cypEmailUser.toString()},
-            }
-        };
-
-        docClient.getItem(query, function (err, data) {
-            console.log("[INFO] - Email query succeeded.");
-            if (err) {
-                console.error("[INFO] - Email unable to query. Error:", JSON.stringify(err, null, 2));
-            } else if (data.Item) {
-                //Email found.
-                console.log("[INFO] - An email was found...");
-                console.log(data.Item);
-                if (data.Item.has_voted.N == 1) {
-                    //User has voted. Error and block.
-                    console.log("[INFO] - User already voted...");
-                    ctx.reply(Emoji.emojify(ctx.i18n.t('hasVoted')));
-                    if(!isTimeToClose()){
-                        ctx.scene.enter('voted');
-                    }else{
-                        ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
-                    }
 
 
-                } else if (data.Item.has_voted.N == 0) {
-                    //User has not voted. Proceed.
-                    ctx.reply(Emoji.emojify(ctx.i18n.t('emailCorrect')));
-                    ctx.session.voterType = 1;
-                    ctx.session.password = generator.generate({
-                        length: 4,
-                        numbers: true,
-                        uppercase: false,
-                        excludeSimilarCharacters: true,
-                        exclude: 'abcdefghijklmnopqrstuvwxyz'
-
-                    });
-                    ctx.session.email = cypEmail.toString();
-                    ctx.session.emailUser = cypEmailUser.toString();
-
-                    sendEmail(ctx).then(function (ko, ok) {
-                        if (ko) {
-                            console.error("ERR");
-                        } else {
-                            console.log("[INFO] - password scene");
-                            if(!isTimeToClose()){
-                                ctx.scene.enter('password');
-                            }else{
-                                ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
-                            }
-
-                        }
-
-                    })
-
+        if (_.isEqual(parsedDomain.domain, process.env.VERIFY_DOMAIN)) {
+            let docClient = new AWS.DynamoDB;
+            let query = {
+                TableName: "voter_email",
+                Key: {
+                    'user': {"S": cypEmailUser.toString()},
                 }
-            } else {
-                //Email not found. Proceed.
-                if (_.isEqual(parsedDomain.domain, process.env.VERIFY_DOMAIN)) {
-                    //Email is domain verified.
+            };
+
+            docClient.getItem(query, function (err, data) {
+                console.log("[INFO] - Email query succeeded.");
+                if (err) {
+                    console.error("[INFO] - Email unable to query. Error:", JSON.stringify(err, null, 2));
+                } else if (data.Item) {
+                    console.log("[INFO] - Domain verified email found... ")
+
+                } else {
+                    //Email not found. Proceed. Email is domain verified.
                     ctx.reply(Emoji.emojify(ctx.i18n.t('emailCorrect')));
                     ctx.session.voterType = 0;
                     ctx.session.password = generator.generate({
@@ -183,15 +147,78 @@ email.on('message', (ctx) => {
                         }
 
                     })
+                }
 
-                } else {
+
+            });
+
+
+        }else{
+            //External email voter
+            let docClient = new AWS.DynamoDB;
+            let query = {
+                TableName: "voter_email",
+                Key: {
+                    'user': {"S": cypEmail.toString()},
+                }
+            };
+
+            docClient.getItem(query, function (err, data) {
+                if (err) {
+                    console.error("[INFO] - Email unable to query. Error:", JSON.stringify(err, null, 2));
+                } else if (data.Item) {
+                    console.log("[INFO] - External email found... ");
+                    console.log(data.Item);
+                    if (data.Item.has_voted.N == 1) {
+                        //User has voted. Error and block.
+                        console.log("[INFO] - User already voted...");
+                        ctx.reply(Emoji.emojify(ctx.i18n.t('hasVoted')));
+                        if(!isTimeToClose()){
+                            ctx.scene.enter('voted');
+                        }else{
+                            ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
+                        }
+
+                    } else if (data.Item.has_voted.N == 0) {
+                        //User has not voted. Proceed.
+                        ctx.reply(Emoji.emojify(ctx.i18n.t('emailCorrect')));
+                        ctx.session.voterType = 1;
+                        ctx.session.password = generator.generate({
+                            length: 4,
+                            numbers: true,
+                            uppercase: false,
+                            excludeSimilarCharacters: true,
+                            exclude: 'abcdefghijklmnopqrstuvwxyz'
+
+                        });
+                        ctx.session.email = cypEmail.toString();
+                        ctx.session.emailUser = cypEmailUser.toString();
+
+                        sendEmail(ctx).then(function (ko, ok) {
+                            if (ko) {
+                                console.error("ERR");
+                            } else {
+                                console.log("[INFO] - password scene");
+                                if(!isTimeToClose()){
+                                    ctx.scene.enter('password');
+                                }else{
+                                    ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
+                                }
+
+                            }
+
+                        })
+
+                    }
+
+                }else {
                     //Email is not UPV nor authorised. Error and block.
                     ctx.reply(Emoji.emojify(ctx.i18n.t('emailNotCorrect')));
                 }
-            }
+            })
 
 
-        });
+        }
     }
 
     else {
