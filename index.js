@@ -462,7 +462,6 @@ verify.on('callback_query', ctx => {
             console.log("[INFO] - Verify, voter type 1");
 
 
-            //TODO: Retrieve record and check if has_voted == 1
             let db = new AWS.DynamoDB;
             let query = {
                 TableName: "voter_email",
