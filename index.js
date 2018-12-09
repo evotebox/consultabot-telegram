@@ -36,6 +36,7 @@ language.on('callback_query', ctx => {
     let answer = ctx.callbackQuery.data;
     if (answer === 'es') {
         ctx.answerCbQuery("Castellano");
+        ctx.editMessageText("Tria idioma / Selecciona idioma");
         console.log("[INFO] - Changing to Spanish via callback");
         ctx.i18n.locale('es');
         if (!isTimeToClose()) {
@@ -76,6 +77,10 @@ greeter.enter((ctx) => {
 ///////////////////////////////
 
 
+
+
+
+
 /////////////////////////////// Email Scene
 const email = new Scene('email');
 email.on('message', (ctx) => {
@@ -91,7 +96,12 @@ email.on('message', (ctx) => {
 ///////////////////////////////
 
 
-////////////////////////////// Verify email scene
+
+
+
+
+
+////////////////////////////// Verify email scene V2.0
 const verifyEmail = new Scene('verifyEmail');
 verifyEmail.enter((ctx) => {
     console.log("[INFO] - start command, choosing language");
@@ -105,9 +115,18 @@ verifyEmail.enter((ctx) => {
 });
 
 verifyEmail.on('callback_query', ctx => {
+
+    ctx.editMessageText(Emoji.emojify(ctx.i18n.t('emailVerify', {
+        email_verify: ctx.session.emailRaw
+    })));
+
+
     let answer = ctx.callbackQuery.data;
     if (answer === 'email_verify_yes') {
         ctx.answerCbQuery("Si");
+
+
+        //TODO: CHEK DOMAIN AND LTD
 
         let domain = ctx.session.emailRaw.replace(/.*@/, "");
         let emailAdd = Addrs.parseOneAddress(ctx.session.emailRaw);
@@ -118,27 +137,55 @@ verifyEmail.on('callback_query', ctx => {
         let cypEmailUser = CryptoJS.SHA3(emailUser);
 
 
-
         if (_.isEqual(parsedDomain.domain, process.env.VERIFY_DOMAIN)) {
+
+            //Proceed. Email is domain verified.
+            ctx.reply(Emoji.emojify(ctx.i18n.t('emailCorrect')));
+            ctx.session.voterType = 0;
+            ctx.session.password = generator.generate({
+                length: 4,
+                numbers: true,
+                uppercase: false,
+                excludeSimilarCharacters: true,
+                exclude: 'abcdefghijklmnopqrstuvwxyz'
+
+            });
+            ctx.session.email = cypEmail.toString();
+            ctx.session.emailUser = cypEmailUser.toString();
+            ctx.session.passwordCount = 0;
+
+            sendEmail(ctx, password).then(function (ko, ok) {
+                if (ko) {
+                    console.error("ERR");
+                } else {
+                    console.log("[INFO] - password scene");
+                    if (!isTimeToClose()) {
+                        ctx.scene.enter('password');
+                    } else {
+                        ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
+                    }
+                }
+
+            })
+
+        } else {
+            //External email voter
             let docClient = new AWS.DynamoDB;
             let query = {
                 TableName: "voter_email",
                 Key: {
-                    'user': {"S": cypEmailUser.toString()},
+                    'user': {"S": cypEmail.toString()},
                 }
             };
-
             docClient.getItem(query, function (err, data) {
-                console.log("[INFO] - Email query succeeded.");
                 if (err) {
                     console.error("[INFO] - Email unable to query. Error:", JSON.stringify(err, null, 2));
                 } else if (data.Item) {
-                    console.log("[INFO] - Domain verified email found... ")
+                    console.log("[INFO] - External email found... ");
+                    console.log(data.Item);
 
-                } else {
-                    //Email not found. Proceed. Email is domain verified.
                     ctx.reply(Emoji.emojify(ctx.i18n.t('emailCorrect')));
-                    ctx.session.voterType = 0;
+                    ctx.session.voterType = 1;
                     ctx.session.password = generator.generate({
                         length: 4,
                         numbers: true,
@@ -151,7 +198,7 @@ verifyEmail.on('callback_query', ctx => {
                     ctx.session.emailUser = cypEmailUser.toString();
                     ctx.session.passwordCount = 0;
 
-                    sendEmail(ctx, password).then(function (ko, ok) {
+                    sendEmail(ctx).then(function (ko, ok) {
                         if (ko) {
                             console.error("ERR");
                         } else {
@@ -162,69 +209,8 @@ verifyEmail.on('callback_query', ctx => {
                                 ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
                             }
                         }
-
                     })
-                }
 
-
-            });
-
-
-        } else {
-            //External email voter
-            let docClient = new AWS.DynamoDB;
-            let query = {
-                TableName: "voter_email",
-                Key: {
-                    'user': {"S": cypEmail.toString()},
-                }
-            };
-
-            docClient.getItem(query, function (err, data) {
-                if (err) {
-                    console.error("[INFO] - Email unable to query. Error:", JSON.stringify(err, null, 2));
-                } else if (data.Item) {
-                    console.log("[INFO] - External email found... ");
-                    console.log(data.Item);
-                    if (data.Item.has_voted.N == 1) {
-                        //User has voted. Error and block.
-                        console.log("[INFO] - User already voted...");
-                        ctx.reply(Emoji.emojify(ctx.i18n.t('hasVoted')));
-                        if (!isTimeToClose()) {
-                            ctx.scene.enter('voted');
-                        } else {
-                            ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
-                        }
-
-                    } else if (data.Item.has_voted.N == 0) {
-                        //User has not voted. Proceed.
-                        ctx.reply(Emoji.emojify(ctx.i18n.t('emailCorrect')));
-                        ctx.session.voterType = 1;
-                        ctx.session.password = generator.generate({
-                            length: 4,
-                            numbers: true,
-                            uppercase: false,
-                            excludeSimilarCharacters: true,
-                            exclude: 'abcdefghijklmnopqrstuvwxyz'
-
-                        });
-                        ctx.session.email = cypEmail.toString();
-                        ctx.session.emailUser = cypEmailUser.toString();
-                        ctx.session.passwordCount = 0;
-
-                        sendEmail(ctx).then(function (ko, ok) {
-                            if (ko) {
-                                console.error("ERR");
-                            } else {
-                                console.log("[INFO] - password scene");
-                                if (!isTimeToClose()) {
-                                    ctx.scene.enter('password');
-                                } else {
-                                    ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
-                                }
-                            }
-                        })
-                    }
                 } else {
                     //Email is not UPV nor authorised. Error and block.
                     ctx.reply(Emoji.emojify(ctx.i18n.t('emailNotCorrect')));
@@ -238,6 +224,14 @@ verifyEmail.on('callback_query', ctx => {
     }
 });
 ///////////////////////////////
+
+
+
+
+
+
+
+
 
 
 /////////////////////////////// Password Scene
@@ -277,6 +271,7 @@ vote1.enter((ctx) => {
 
 vote1.on('callback_query', ctx => {
     console.log("[INFO] - Vote1 recieved");
+    ctx.editMessageText(ctx.i18n.t('vote1'));
     if (_.isEqual("yes_vote1", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("Sí");
         if (!isTimeToClose()) {
@@ -329,6 +324,7 @@ vote2.enter((ctx) => {
 
 vote2.on('callback_query', ctx => {
     console.log("[INFO] - Vote2 recieved");
+    ctx.editMessageText(ctx.i18n.t('vote2'));
     if (_.isEqual("yes_vote2", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("Sí");
         if (!isTimeToClose()) {
@@ -389,62 +385,145 @@ verify.enter((ctx) => {
 
 verify.on('callback_query', ctx => {
     console.log("[INFO] - Verifying");
+    let answer = "";
+    if (!ctx.session.vote2) {
+        answer = 'verify1'
+    } else {
+        answer = 'verify'
+    }
+    ctx.editMessageText(Emoji.emojify(ctx.i18n.t(answer, {
+        vote1: ctx.session.vote1,
+        vote2: ctx.session.vote2
+    })));
     if (_.isEqual("si_verify", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("Sí");
 
         if (ctx.session.voterType === 0) {
-            let docClient = new AWS.DynamoDB.DocumentClient();
-            let item = {
-                TableName: 'voter_email',
-                Item: {
-                    "user": ctx.session.emailUser,
-                    "has_voted": 1
-                }
-            };
+            console.log("[INFO] - Verify, voter type 0");
 
-            console.log("Adding a new item...");
-            docClient.put(item, function (err, data) {
-                if (err) {
-                    console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-                } else {
-                    console.log("Added item:", JSON.stringify(data, null, 2));
-                }
-            });
-        } else if (ctx.session.voterType === 1) {
-            let docClient = new AWS.DynamoDB.DocumentClient();
-            let item = {
-                TableName: 'voter_email',
+            let db = new AWS.DynamoDB;
+            let query = {
+                TableName: "voter_email",
                 Key: {
-                    'user': ctx.session.email
-                },
-                UpdateExpression: "set has_voted = :hv",
-                ExpressionAttributeValues: {
-                    ":hv": 1
-                },
-                ReturnValues: "UPDATED_NEW"
-            };
-            console.log(JSON.stringify(item));
-
-            console.log("Updating the item...");
-            docClient.update(item, function (err, data) {
-                if (err) {
-                    console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
-                } else {
-                    console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+                    'user': {"S": ctx.session.emailUser},
                 }
+            };
+
+            db.getItem(query, function (err, data) {
+                console.log("[INFO] - Email query succeeded.");
+                if (err) {
+                    console.error("[INFO] - Email unable to query. Error:", JSON.stringify(err, null, 2));
+                } else if (data.Item) {
+                    console.log("[INFO] - Domain verified email found... ");
+                    console.log(JSON.stringify(data));
+                    if (data.Item.has_voted && data.Item.has_voted.N == 1) {
+                        //User has voted
+                        ctx.reply(Emoji.emojify(ctx.i18n.t('hasVoted')));
+                        if (!isTimeToClose()) {
+                            ctx.scene.enter('voted');
+                        } else {
+                            ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
+                        }
+                    }else{
+                        //User has not voted
+                        console.log("[INFO] - User has not voted, registering...");
+                        let docClient = new AWS.DynamoDB.DocumentClient();
+                        let item = {
+                            TableName: 'voter_email',
+                            Item: {
+                                "user": ctx.session.emailUser,
+                                "has_voted": 1
+                            }
+                        };
+
+                        console.log("Adding a new item...");
+                        docClient.put(item, function (err, data) {
+                            if (err) {
+                                console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+                            } else {
+                                console.log("Added item:", JSON.stringify(data, null, 2));
+                                //TODO: STORE THE VOTE
+                                ctx.reply(ctx.i18n.t('thanks'));
+                                if (!isTimeToClose()) {
+                                    ctx.scene.enter('voted')
+                                } else {
+                                    ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
+                                }
+                            }
+                        });
+
+                    }
+
+                }
+            });
+
+
+        } else if (ctx.session.voterType === 1) {
+            console.log("[INFO] - Verify, voter type 1");
+
+
+            //TODO: Retrieve record and check if has_voted == 1
+            let db = new AWS.DynamoDB;
+            let query = {
+                TableName: "voter_email",
+                Key: {
+                    'user': {"S": ctx.session.email},
+                }
+            };
+            db.getItem(query, function (err, data) {
+                console.log("[INFO] - Email query succeeded.");
+                if (err) {
+                    console.error("[INFO] - Email unable to query. Error:", JSON.stringify(err, null, 2));
+                } else if (data.Item) {
+                    if (data.Item.has_voted && data.Item.has_voted.N == 1) {
+                        //User has voted
+                        ctx.reply(Emoji.emojify(ctx.i18n.t('hasVoted')));
+                        if (!isTimeToClose()) {
+                            ctx.scene.enter('voted');
+                        } else {
+                            ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
+                        }
+
+                    }else{
+                        //User has not voted
+                        let docClient = new AWS.DynamoDB.DocumentClient();
+                        let item = {
+                            TableName: 'voter_email',
+                            Key: {
+                                'user': ctx.session.email
+                            },
+                            UpdateExpression: "set has_voted = :hv",
+                            ExpressionAttributeValues: {
+                                ":hv": 1
+                            },
+                            ReturnValues: "UPDATED_NEW"
+                        };
+                        console.log(JSON.stringify(item));
+
+                        console.log("Updating the item...");
+                        docClient.update(item, function (err, data) {
+                            if (err) {
+                                console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+                            } else {
+                                console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+                                //TODO: STORE THE VOTE
+                                ctx.reply(ctx.i18n.t('thanks'));
+                                if (!isTimeToClose()) {
+                                    ctx.scene.enter('voted')
+                                } else {
+                                    ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
+                                }
+                            }
+                        });
+
+                    }
+
+                }
+
             });
         }
 
 
-        ctx.reply(ctx.i18n.t('thanks'));
-        //TODO: STORE THE VOTE
-
-
-        if (!isTimeToClose()) {
-            ctx.scene.enter('voted')
-        } else {
-            ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
-        }
 
     } else if (_.isEqual("no_verify", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("No");
