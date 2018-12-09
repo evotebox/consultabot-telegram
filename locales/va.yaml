@@ -1,4 +1,8 @@
 greeting: ":wave: ¡Hola!\nVamos a comprobar que eres miembro de la UPV. Dime tu dirección de email de la universidad, por favor:smiley:"
+
+emailVerify: "Voy a proceder a verificar este correo ${email_verify}. ¿Es correcto?"
+emailVerifyNo: "De acuerdo, vuelve a introducir tu correo por favor."
+
 emailCorrect: "Acabo de enviarte un código a tu correo :smiley:\n¿Puedes decirmelo, por favor? Espero mientras lo localizas."
 emailNotCorrect: "Lo lamento, no puedes votar. Me han programado para ser utilizado únicamente por lxs miembros de la UPV. Que tengas un buen día."
 

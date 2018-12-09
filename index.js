@@ -40,9 +40,9 @@ language.on('callback_query', ctx => {
         ctx.answerCbQuery("Castellano");
         console.log("[INFO] - Changing to Spanish via callback");
         ctx.i18n.locale('es');
-        if(!isTimeToClose()){
+        if (!isTimeToClose()) {
             ctx.scene.enter('greeter');
-        }else{
+        } else {
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
 
@@ -50,9 +50,9 @@ language.on('callback_query', ctx => {
         ctx.answerCbQuery("Valencià");
         console.log("[INFO] - Changing to Catalan via callback");
         ctx.i18n.locale('va');
-        if(!isTimeToClose()){
+        if (!isTimeToClose()) {
             ctx.scene.enter('greeter');
-        }else{
+        } else {
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
     }
@@ -68,9 +68,9 @@ greeter.enter((ctx) => {
     ctx.reply(Emoji.emojify(ctx.i18n.t('greeting', {
         user_name: ctx.from.first_name
     }))).then(function () {
-        if(!isTimeToClose()){
-            ctx.scene.enter('verifyEmail');
-        }else{
+        if (!isTimeToClose()) {
+            ctx.scene.enter('email');
+        } else {
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
 
@@ -80,24 +80,46 @@ greeter.enter((ctx) => {
 ///////////////////////////////
 
 
-////////////////////////////// Verify email scene
-const verifyEmail = new Scene('verifyEmail');
-verifyEmail.on
-
-
-
 /////////////////////////////// Email Scene
 const email = new Scene('email');
 email.on('message', (ctx) => {
     console.log("[INFO] - Email scene");
-
     if (ctx.message.text && EmailValidator.validate(ctx.message.text)) {
-        let domain = ctx.message.text.replace(/.*@/, "");
-        let emailAdd = Addrs.parseOneAddress(ctx.message.text);
+        ctx.scene.enter('verifyEmail');
+        ctx.session.emailRaw = ctx.message.text;
+    } else {
+        console.log("Format ERROR");
+        ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedEmail')));
+    }
+
+});
+///////////////////////////////
+
+
+////////////////////////////// Verify email scene
+const verifyEmail = new Scene('verifyEmail');
+verifyEmail.enter((ctx) => {
+    console.log("[INFO] - start command, choosing language");
+    ctx.reply(Emoji.emojify(ctx.i18n.t('emailVerify', {
+        email_verify: ctx.session.emailRaw
+    })), Extra.HTML().markup((m) =>
+        m.inlineKeyboard([
+            m.callbackButton('Sí', 'email_verify_yes'),
+            m.callbackButton('No', 'email_verify_no')
+        ])))
+});
+
+verifyEmail.on('callback_query', ctx => {
+    let answer = ctx.callbackQuery.data;
+    if (answer === 'email_verify_yes') {
+        ctx.answerCbQuery("Si");
+
+        let domain = ctx.session.emailRaw.replace(/.*@/, "");
+        let emailAdd = Addrs.parseOneAddress(ctx.session.emailRaw);
         let emailUser = emailAdd.local;
         let parsedDomain = parseDomain(domain);
 
-        let cypEmail = CryptoJS.SHA3(ctx.message.text);
+        let cypEmail = CryptoJS.SHA3(ctx.session.emailRaw);
         let cypEmailUser = CryptoJS.SHA3(emailUser);
 
 
@@ -139,9 +161,9 @@ email.on('message', (ctx) => {
                             console.error("ERR");
                         } else {
                             console.log("[INFO] - password scene");
-                            if(!isTimeToClose()){
+                            if (!isTimeToClose()) {
                                 ctx.scene.enter('password');
-                            }else{
+                            } else {
                                 ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
                             }
                         }
@@ -153,7 +175,7 @@ email.on('message', (ctx) => {
             });
 
 
-        }else{
+        } else {
             //External email voter
             let docClient = new AWS.DynamoDB;
             let query = {
@@ -173,9 +195,9 @@ email.on('message', (ctx) => {
                         //User has voted. Error and block.
                         console.log("[INFO] - User already voted...");
                         ctx.reply(Emoji.emojify(ctx.i18n.t('hasVoted')));
-                        if(!isTimeToClose()){
+                        if (!isTimeToClose()) {
                             ctx.scene.enter('voted');
-                        }else{
+                        } else {
                             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
                         }
 
@@ -193,15 +215,16 @@ email.on('message', (ctx) => {
                         });
                         ctx.session.email = cypEmail.toString();
                         ctx.session.emailUser = cypEmailUser.toString();
+                        ctx.session.passwordCount = 0;
 
                         sendEmail(ctx).then(function (ko, ok) {
                             if (ko) {
                                 console.error("ERR");
                             } else {
                                 console.log("[INFO] - password scene");
-                                if(!isTimeToClose()){
+                                if (!isTimeToClose()) {
                                     ctx.scene.enter('password');
-                                }else{
+                                } else {
                                     ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
                                 }
 
@@ -211,7 +234,7 @@ email.on('message', (ctx) => {
 
                     }
 
-                }else {
+                } else {
                     //Email is not UPV nor authorised. Error and block.
                     ctx.reply(Emoji.emojify(ctx.i18n.t('emailNotCorrect')));
                 }
@@ -219,13 +242,13 @@ email.on('message', (ctx) => {
 
 
         }
-    }
 
-    else {
-        console.log("Format ERROR");
-        ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedEmail')));
-    }
 
+    } else if (answer === 'email_verify_no') {
+        ctx.answerCbQuery("No");
+        ctx.reply(Emoji.emojify(ctx.i18n.t('emailVerifyNo')));
+        ctx.scene.enter('email');
+    }
 });
 ///////////////////////////////
 
@@ -234,19 +257,19 @@ email.on('message', (ctx) => {
 const password = new Scene('password');
 password.on('message', (ctx) => {
     ctx.session.passwordCount = ctx.session.passwordCount + 1;
-    if(ctx.session.passwordCount <4){
+    if (ctx.session.passwordCount < 4) {
         if (_.isEqual(ctx.session.password, ctx.message.text)) {
             ctx.reply(ctx.i18n.t('passwordCorrect')).then(function () {
-                if(!isTimeToClose()){
+                if (!isTimeToClose()) {
                     ctx.scene.enter('vote1');
-                }else{
+                } else {
                     ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
                 }
             })
-        }else{
+        } else {
             ctx.reply(ctx.i18n.t('passwordNotCorrect'));
         }
-    }else{
+    } else {
         ctx.reply(ctx.i18n.t('tooManyAttempts'))
     }
 });
@@ -269,31 +292,31 @@ vote1.on('callback_query', ctx => {
     console.log("[INFO] - Vote1 recieved");
     if (_.isEqual("yes_vote1", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("Sí");
-        if(!isTimeToClose()){
+        if (!isTimeToClose()) {
             ctx.session.vote1 = "Sí";
             ctx.scene.enter('vote2');
-        }else{
+        } else {
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
 
     } else if (_.isEqual("no_vote1", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("No");
-        if(!isTimeToClose()){
+        if (!isTimeToClose()) {
             ctx.session.vote1 = "No";
             ctx.scene.enter('verify');
-        }else{
+        } else {
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
 
-    } else if (_.isEqual("abs_vote1", ctx.callbackQuery.data)){
+    } else if (_.isEqual("abs_vote1", ctx.callbackQuery.data)) {
         ctx.answerCbQuery(ctx.i18n.t('abs'));
-        if(!isTimeToClose()){
+        if (!isTimeToClose()) {
             ctx.session.vote1 = "Abstención";
             ctx.scene.enter('verify');
-        }else{
+        } else {
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
-    } else{
+    } else {
         ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedVote')));
     }
 
@@ -321,31 +344,31 @@ vote2.on('callback_query', ctx => {
     console.log("[INFO] - Vote2 recieved");
     if (_.isEqual("yes_vote2", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("Sí");
-        if(!isTimeToClose()){
+        if (!isTimeToClose()) {
             ctx.session.vote2 = "Sí";
             ctx.scene.enter('verify');
-        }else{
+        } else {
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
 
     } else if (_.isEqual("no_vote2", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("No");
-        if(!isTimeToClose()){
+        if (!isTimeToClose()) {
             ctx.session.vote2 = "No";
             ctx.scene.enter('verify');
-        }else{
+        } else {
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
 
-    } else if (_.isEqual("abs_vote2", ctx.callbackQuery.data)){
+    } else if (_.isEqual("abs_vote2", ctx.callbackQuery.data)) {
         ctx.answerCbQuery(ctx.i18n.t('abs'));
-        if(!isTimeToClose()){
+        if (!isTimeToClose()) {
             ctx.session.vote2 = "Abstención";
             ctx.scene.enter('verify');
-        }else{
+        } else {
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
-    } else{
+    } else {
         ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedVote')));
     }
 
@@ -405,7 +428,7 @@ verify.on('callback_query', ctx => {
             let item = {
                 TableName: 'voter_email',
                 Key: {
-                    'user': ctx.session.emailUser
+                    'user': ctx.session.email
                 },
                 UpdateExpression: "set has_voted = :hv",
                 ExpressionAttributeValues: {
@@ -430,22 +453,20 @@ verify.on('callback_query', ctx => {
         //TODO: STORE THE VOTE
 
 
-
-
-        if(!isTimeToClose()){
+        if (!isTimeToClose()) {
             ctx.scene.enter('voted')
-        }else{
+        } else {
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
 
-    } else if (_.isEqual("no_verify", ctx.callbackQuery.data)){
+    } else if (_.isEqual("no_verify", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("No");
-        if(!isTimeToClose()){
+        if (!isTimeToClose()) {
             ctx.scene.enter('vote1')
-        }else{
+        } else {
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
-    } else{
+    } else {
         ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedVote')))
     }
 
@@ -457,7 +478,6 @@ verify.on('message', (ctx) => {
 ///////////////////////////////
 
 
-
 /////////////////////////////// Voted Scene
 const voted = new Scene('voted');
 voted.on('message', (ctx) => {
@@ -465,8 +485,6 @@ voted.on('message', (ctx) => {
 
 });
 ///////////////////////////////
-
-
 
 
 // Create scene manager
@@ -477,6 +495,7 @@ stage.command('cancelar', leave());
 // Scene registration
 stage.register(language);
 stage.register(greeter);
+stage.register(verifyEmail);
 stage.register(email);
 stage.register(password);
 stage.register(vote1);
@@ -506,10 +525,10 @@ console.log("[INFO] - Init...");
 
 bot.command('start', (ctx) => {
     console.log("[INFO] - Start command");
-    console.log("Time to close? "+isTimeToClose());
-    if(!isTimeToClose()){
+    console.log("Time to close? " + isTimeToClose());
+    if (!isTimeToClose()) {
         ctx.scene.enter('language')
-    }else{
+    } else {
         ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
     }
 });
@@ -518,15 +537,13 @@ bot.command('start', (ctx) => {
 bot.startPolling();
 
 
-
-
 //Sends an emails with the code to the voter
 function sendEmail(ctx) {
     return new Promise(function (resolve, reject) {
 
         let params = {
             Destination: {
-                ToAddresses: [ctx.message.text],
+                ToAddresses: [ctx.session.emailRaw],
                 BccAddresses: [process.env.GDPR_BCC]
             },
             Message: {
@@ -551,7 +568,7 @@ function sendEmail(ctx) {
 
         sendPromise.then(
             function (data) {
-                console.log("[INFO] - Email sent correctly: "+data.MessageId);
+                console.log("[INFO] - Email sent correctly: " + data.MessageId);
                 return resolve();
             }).catch(
             function (err) {
@@ -563,7 +580,7 @@ function sendEmail(ctx) {
 }
 
 //Sends an email to the authorities with the vote
-function sendEmailVote(vote){
+function sendEmailVote(vote) {
     return new Promise(function (resolve, reject) {
 
         let params = {
@@ -592,7 +609,7 @@ function sendEmailVote(vote){
 
         sendPromise.then(
             function (data) {
-                console.log("[INFO] - Email sent correctly: "+data.MessageId);
+                console.log("[INFO] - Email sent correctly: " + data.MessageId);
                 return resolve();
             }).catch(
             function (err) {
@@ -604,7 +621,7 @@ function sendEmailVote(vote){
 }
 
 
-function isTimeToClose(){
+function isTimeToClose() {
     let now = Moment().local();
     //console.log("NOW:" + now.toString());
     //console.log("END DATE: "+EndDate.toString());
