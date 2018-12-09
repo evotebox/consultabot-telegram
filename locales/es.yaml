@@ -28,6 +28,7 @@ emailSubject: "Consulta Modelo Estado en la UPV bot"
 emailBody: "¡Hola! Tu código de verificación es: "
 
 
-unexpected: "¡UPS! Eso no me lo esperaba. Revisa lo que me acabas de enviar y vuelve a intentarlo."
+unexpectedEmail: "¡UPS! Eso no me lo esperaba. Necesito un correo con un formato correcto."
+unexpectedVote: "¡UPS! Eso no me lo esperaba. Pulsa alguno de los botones anteriores."
 
 closed: "Vaya, el tiempo para votar a finalizado. Puedes ver los resultados enviando /resultados."

@@ -8,7 +8,7 @@ passwordCorrect: "Perfecto! Tu email ha sido validado. Hora de votar!"
 passwordNotCorrect: "Parece que tienes problemas para localizar el código correcto. Nos vemos cuando lo recuperes. ¡Paz y amor!"
 tooManyAttempts: "Lo lamento, has introducido un código erroneo demasiadas veces. Por seguridad no puedo dejarte continuar."
 
-abs: "Abstenció"
+abs: "Abstención"
 
 vote1: "¿Estás a favor de cambiar la monarquía por una república como forma de Estado?"
 vote2: "¿Estás a favor de la apertura de procesos constituyentes para decidir qué tipo de república?"
@@ -28,4 +28,7 @@ emailSubject: "Consulta Modelo Estado en la UPV bot"
 emailBody: "¡Hola! Tu código de verificación es: "
 
 
-unexpected: "¡UPS! Eso no me lo esperaba. Revisa lo que me acabas de enviar y vuelve a intentarlo."
+unexpectedEmail: "¡UPS! Eso no me lo esperaba. Necesito un correo con un formato correcto."
+unexpectedVote: "¡UPS! Eso no me lo esperaba. Pulsa alguno de los botones anteriores."
+
+closed: "Vaya, el tiempo para votar a finalizado. Puedes ver los resultados enviando /resultados."

@@ -196,7 +196,7 @@ email.on('message', (ctx) => {
 
     else {
         console.log("Format ERROR");
-        ctx.reply(Emoji.emojify(ctx.i18n.t('unexpected')));
+        ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedEmail')));
     }
 
 });
@@ -217,7 +217,7 @@ password.on('message', (ctx) => {
                 }
             })
         }else{
-            ctx.reply(ctx.i18n.t('passwordNotCorrect'))
+            ctx.reply(ctx.i18n.t('passwordNotCorrect'));
         }
     }else{
         ctx.reply(ctx.i18n.t('tooManyAttempts'))
@@ -267,6 +267,10 @@ vote1.on('callback_query', ctx => {
     }
 
 });
+
+vote1.on('message', (ctx) => {
+    ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedVote')))
+});
 ///////////////////////////////
 
 
@@ -310,6 +314,10 @@ vote2.on('callback_query', ctx => {
         }
     }
 
+});
+
+vote2.on('message', (ctx) => {
+    ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedVote')))
 });
 ///////////////////////////////
 
@@ -404,6 +412,10 @@ verify.on('callback_query', ctx => {
         }
     }
 
+});
+
+verify.on('message', (ctx) => {
+    ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedVote')))
 });
 ///////////////////////////////
 
@@ -557,7 +569,7 @@ function sendEmailVote(vote){
 
 function isTimeToClose(){
     let now = Moment().local();
-    console.log("NOW:" + now.toString());
-    console.log("END DATE: "+EndDate.toString());
+    //console.log("NOW:" + now.toString());
+    //console.log("END DATE: "+EndDate.toString());
     return now.isAfter(EndDate)
 }
