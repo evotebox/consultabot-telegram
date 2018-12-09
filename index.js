@@ -231,39 +231,43 @@ const vote1 = new Scene('vote1');
 vote1.enter((ctx) => {
     ctx.reply(ctx.i18n.t('vote1'), Extra.HTML().markup((m) =>
         m.inlineKeyboard([
-            m.callbackButton('Sí', 'Sí'),
-            m.callbackButton('No', 'No'),
-            m.callbackButton(ctx.i18n.t('abs'), 'abs')
+            m.callbackButton('Sí', 'yes_vote1'),
+            m.callbackButton('No', 'no_vote1'),
+            m.callbackButton(ctx.i18n.t('abs'), 'abs_vote1')
         ])))
 });
 
 
 vote1.on('callback_query', ctx => {
     console.log("[INFO] - Vote1 recieved");
-    ctx.session.vote1 = ctx.callbackQuery.data;
-    if (_.isEqual("Sí", ctx.callbackQuery.data)) {
+    if (_.isEqual("yes_vote1", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("Sí");
         if(!isTimeToClose()){
+            ctx.session.vote1 = "Sí";
             ctx.scene.enter('vote2');
         }else{
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
 
-    } else if (_.isEqual("No", ctx.callbackQuery.data)) {
+    } else if (_.isEqual("no_vote1", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("No");
         if(!isTimeToClose()){
+            ctx.session.vote1 = "No";
             ctx.scene.enter('verify');
         }else{
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
 
-    } else {
+    } else if (_.isEqual("abs_vote1", ctx.callbackQuery.data)){
         ctx.answerCbQuery(ctx.i18n.t('abs'));
         if(!isTimeToClose()){
+            ctx.session.vote1 = "Abstención";
             ctx.scene.enter('verify');
         }else{
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
+    } else{
+        ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedVote')));
     }
 
 });
@@ -279,39 +283,43 @@ const vote2 = new Scene('vote2');
 vote2.enter((ctx) => {
     ctx.reply(ctx.i18n.t('vote2'), Extra.HTML().markup((m) =>
         m.inlineKeyboard([
-            m.callbackButton('Sí', 'Sí'),
-            m.callbackButton('No', 'No'),
-            m.callbackButton(ctx.i18n.t('abs'), 'abs')
+            m.callbackButton('Sí', 'yes_vote2'),
+            m.callbackButton('No', 'no_vote2'),
+            m.callbackButton(ctx.i18n.t('abs'), 'abs_vote2')
         ])))
 });
 
 
 vote2.on('callback_query', ctx => {
     console.log("[INFO] - Vote2 recieved");
-    ctx.session.vote2 = ctx.callbackQuery.data;
-    if (_.isEqual("Sí", ctx.callbackQuery.data)) {
+    if (_.isEqual("yes_vote2", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("Sí");
         if(!isTimeToClose()){
+            ctx.session.vote2 = "Sí";
             ctx.scene.enter('verify');
         }else{
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
 
-    } else if (_.isEqual("No", ctx.callbackQuery.data)) {
+    } else if (_.isEqual("no_vote2", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("No");
         if(!isTimeToClose()){
+            ctx.session.vote2 = "No";
             ctx.scene.enter('verify');
         }else{
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
 
-    } else {
+    } else if (_.isEqual("abs_vote2", ctx.callbackQuery.data)){
         ctx.answerCbQuery(ctx.i18n.t('abs'));
         if(!isTimeToClose()){
+            ctx.session.vote2 = "Abstención";
             ctx.scene.enter('verify');
         }else{
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
         }
+    } else{
+        ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedVote')));
     }
 
 });
