@@ -223,6 +223,13 @@ verifyEmail.on('callback_query', ctx => {
         ctx.scene.enter('email');
     }
 });
+
+
+verifyEmail.on('message', (ctx) => {
+    ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedVote')))
+});
+
+
 ///////////////////////////////
 
 
@@ -454,6 +461,34 @@ verify.on('callback_query', ctx => {
 
                     }
 
+                }else{
+                    //No email found, creating record.
+                    //User has not voted
+                    console.log("[INFO] - User has not voted, registering...");
+                    let docClient = new AWS.DynamoDB.DocumentClient();
+                    let item = {
+                        TableName: 'voter_email',
+                        Item: {
+                            "user": ctx.session.emailUser,
+                            "has_voted": 1
+                        }
+                    };
+
+                    console.log("Adding a new item...");
+                    docClient.put(item, function (err, data) {
+                        if (err) {
+                            console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+                        } else {
+                            console.log("Added item:", JSON.stringify(data, null, 2));
+                            //TODO: STORE THE VOTE
+                            ctx.reply(ctx.i18n.t('thanks'));
+                            if (!isTimeToClose()) {
+                                ctx.scene.enter('voted')
+                            } else {
+                                ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
+                            }
+                        }
+                    });
                 }
             });
 
