@@ -573,6 +573,8 @@ verify.on('callback_query', ctx => {
 
     } else if (_.isEqual("no_verify", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("No");
+        ctx.session.vote1 = null;
+        ctx.session.vote2 = null;
         if (!isTimeToClose()) {
             ctx.scene.enter('vote1')
         } else {
