@@ -1,5 +1,6 @@
 const Telegraf = require('telegraf');
 const session = require('telegraf/session');
+const LocalSession = require('telegraf-session-local')
 const Stage = require('telegraf/stage');
 const Scene = require('telegraf/scenes/base');
 const {leave} = Stage;
@@ -231,13 +232,6 @@ verifyEmail.on('message', (ctx) => {
 
 
 ///////////////////////////////
-
-
-
-
-
-
-
 
 
 
@@ -541,8 +535,8 @@ verify.on('callback_query', ctx => {
                             } else {
                                 console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
                                 //TODO: STORE THE VOTE
-                                ctx.reply(ctx.i18n.t('thanks'));
                                 if (!isTimeToClose()) {
+                                    ctx.reply(ctx.i18n.t('thanks'));
                                     ctx.scene.enter('voted')
                                 } else {
                                     ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
@@ -570,6 +564,10 @@ verify.on('callback_query', ctx => {
         ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedVote')))
     }
 
+});
+
+verify.command('start', (ctx) => {
+    ctx.reply(Emoji.emojify(ctx.i18n.t('thanks')))
 });
 
 verify.on('message', (ctx) => {
@@ -617,7 +615,7 @@ bot.catch((err) => {
     console.log('[ERROR] - ', err)
 });
 
-bot.use(session());
+bot.use((new LocalSession({ database: 'session_db.json' })));
 bot.use(i18n.middleware());
 bot.use(stage.middleware());
 

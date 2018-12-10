@@ -1,4 +1,4 @@
-greeting: ":wave: ¡Hola!\nVamos a comprobar que eres miembro de la UPV. Dime tu dirección de email de la universidad, por favor:smiley:"
+greeting: ":wave: ¡Hola!\nVamos a comprobar que eres miembro de la UPV. Dime tu dirección de email de la universidad, por favor (ponlo en minúsculas):smiley:"
 
 emailVerify: "Voy a proceder a verificar este correo ${email_verify}. ¿Es correcto?"
 emailVerifyNo: "De acuerdo, vuelve a introducir tu correo por favor."
@@ -6,7 +6,7 @@ emailVerifyNo: "De acuerdo, vuelve a introducir tu correo por favor."
 emailCorrect: "Acabo de enviarte un código a tu correo :smiley:\n¿Puedes decirmelo, por favor? Espero mientras lo localizas."
 emailNotCorrect: "Lo lamento, no puedes votar. Me han programado para ser utilizado únicamente por lxs miembros de la UPV. Que tengas un buen día."
 
-hasVoted: "Tengo apuntado que ya has votado.\nEstoy programado para respetar la máxima: Una persona Un voto.\nEl próximo 13 de diciembre estarán los resultados. Pásate de nuevo, envía el comando /resultados y te los muestro. ¡Cuídate!"
+hasVoted: "Tengo apuntado que ya has votado.\nEstoy programado para respetar la máxima: Una persona un voto.\nEl próximo 13 de diciembre estarán los resultados. Pásate de nuevo, envía el comando /resultados y te los muestro. ¡Cuídate!"
 
 passwordCorrect: "Perfecto! Tu email ha sido validado. Hora de votar!"
 passwordNotCorrect: "Parece que tienes problemas para localizar el código correcto. Introduce el código correcto, por favor."
