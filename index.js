@@ -275,6 +275,7 @@ vote1.enter((ctx) => {
 
 vote1.on('callback_query', ctx => {
     console.log("[INFO] - Vote1 recieved");
+    ctx.session.vote1 = null;
     ctx.editMessageText(ctx.i18n.t('vote1'));
     if (_.isEqual("yes_vote1", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("Sí");
@@ -331,6 +332,7 @@ vote2.enter((ctx) => {
 
 vote2.on('callback_query', ctx => {
     console.log("[INFO] - Vote2 recieved");
+    ctx.session.vote2 = null;
     ctx.editMessageText(ctx.i18n.t('vote2'));
     if (_.isEqual("yes_vote2", ctx.callbackQuery.data)) {
         ctx.answerCbQuery("Sí");
