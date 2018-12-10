@@ -455,6 +455,10 @@ verify.on('callback_query', ctx => {
                             } else {
                                 console.log("Added item:", JSON.stringify(data, null, 2));
                                 //TODO: STORE THE VOTE
+                                ctx.session.emailRaw = null;
+                                ctx.session.password = null;
+                                ctx.session.vote1 = null;
+                                ctx.session.vote2 = null;
                                 ctx.reply(ctx.i18n.t('thanks'));
                                 if (!isTimeToClose()) {
                                     ctx.scene.enter('voted')
