@@ -127,18 +127,18 @@ verifyEmail.on('callback_query', ctx => {
         ctx.answerCbQuery("Si");
 
 
-        //TODO: CHEK DOMAIN AND LTD
+
 
         let domain = ctx.session.emailRaw.replace(/.*@/, "");
         let emailAdd = Addrs.parseOneAddress(ctx.session.emailRaw);
         let emailUser = emailAdd.local;
         let parsedDomain = parseDomain(domain);
+        let verifyDomain = parseDomain(process.env.VERIFY_DOMAIN);
 
         let cypEmail = CryptoJS.SHA3(ctx.session.emailRaw);
         let cypEmailUser = CryptoJS.SHA3(emailUser);
 
-
-        if (_.isEqual(parsedDomain.domain, process.env.VERIFY_DOMAIN)) {
+        if (_.isEqual(parsedDomain.domain, verifyDomain.domain) && _.isEqual(parsedDomain.tld, verifyDomain.tld)) {
 
             //Proceed. Email is domain verified.
             ctx.reply(Emoji.emojify(ctx.i18n.t('emailCorrect')));
@@ -215,6 +215,7 @@ verifyEmail.on('callback_query', ctx => {
                 } else {
                     //Email is not UPV nor authorised. Error and block.
                     ctx.reply(Emoji.emojify(ctx.i18n.t('emailNotCorrect')));
+                    //TODO: GOTO scene "blocked because of email"
                 }
             })
         }
