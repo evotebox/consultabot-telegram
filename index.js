@@ -704,8 +704,7 @@ const stage = new Stage();
 
 //Results handler
 stage.command('resultados', (ctx) => {
-    //TODO: Delete negation, this is WHEN it is closed.
-    if (!isTimeToClose()) {
+    if (isTimeToClose()) {
         if(GresultsGenerated){
             ctx.reply(Emoji.emojify(ctx.i18n.t('results', {
                 total_voters: GtotalVotes,
