@@ -7,7 +7,7 @@
 .DS_Store
 .AppleDouble
 .LSOverride
-
+*.sh
 # Icon must end with two \r
 Icon
 

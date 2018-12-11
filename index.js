@@ -90,7 +90,7 @@ email.on('message', (ctx) => {
     console.log("[INFO] - Email scene");
     if (ctx.message.text && EmailValidator.validate(ctx.message.text)) {
         ctx.scene.enter('verifyEmail');
-        ctx.session.emailRaw = ctx.message.text;
+        ctx.session.emailRaw = ctx.message.text.toLowerCase();
     } else {
         console.log("Format ERROR");
         ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedEmail')));
