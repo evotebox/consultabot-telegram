@@ -876,8 +876,10 @@ function sendVoteToAuthorities(ctx) {
 
 function isTimeToClose() {
     let now = Moment().local();
-    //console.log("NOW:" + now.toString());
-    //console.log("END DATE: "+EndDate.toString());
+    console.log("--------------------------------------------------");
+    console.log("   --NOW     : " + now.toString());
+    console.log("   --END DATE: "+EndDate.toString());
+    console.log("--------------------------------------------------");
     return now.isAfter(EndDate)
 }
 
