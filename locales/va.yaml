@@ -35,4 +35,8 @@ emailBody: "¡Hola! Tu código de verificación es: "
 unexpectedEmail: "¡UPS! Eso no me lo esperaba. Necesito un correo con un formato correcto."
 unexpectedVote: "¡UPS! Eso no me lo esperaba. Pulsa alguno de los botones anteriores."
 
+results: "Aquí están los resultados: "
+resultsNot: "Ey, la votación aún no ha acabado. Al finalizar te podré mostrar los resultados."
+
+
 closed: "Vaya, el tiempo para votar a finalizado. Puedes ver los resultados enviando /resultados."

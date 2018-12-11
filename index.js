@@ -649,9 +649,6 @@ verify.command('start', (ctx) => {
     ctx.reply(Emoji.emojify(ctx.i18n.t('thanks')))
 });
 
-//TODO: Add /resultados command handler.
-
-
 verify.on('message', (ctx) => {
     ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedVote')))
 });
@@ -668,9 +665,6 @@ blockedEmail.on('message', (ctx) => {
     ctx.reply(Emoji.emojify(ctx.i18n.t('emailNotCorrect')));
 
 });
-
-//TODO: Add /resultados command handler.
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -684,9 +678,6 @@ voted.on('message', (ctx) => {
     ctx.reply(Emoji.emojify(ctx.i18n.t('thanks')));
 
 });
-
-//TODO: Add /resultados command handler.
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -699,9 +690,6 @@ closed.on('message', (ctx) => {
     ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
 
 });
-
-//TODO: Add /resultados command handler.
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -709,7 +697,17 @@ closed.on('message', (ctx) => {
 //####################################################################################################################//
 //--------------------------------------------------------------------------------------------------------------------//
 const stage = new Stage();
-// stage.command('cancelar', leave());
+
+
+
+//Results handler
+stage.command('resultados', (ctx) => {
+    if (isTimeToClose()) {
+        ctx.reply(Emoji.emojify(ctx.i18n.t('results')));
+    } else {
+        ctx.reply(Emoji.emojify(ctx.i18n.t('resultsNot')));
+    }
+});
 
 
 // Scene registration
