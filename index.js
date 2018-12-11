@@ -2,7 +2,7 @@ const Telegraf = require('telegraf');
 const LocalSession = require('telegraf-session-local');
 const Stage = require('telegraf/stage');
 const Scene = require('telegraf/scenes/base');
-const {leave} = Stage;
+const uuidv1 = require('uuid/v1');
 const Emoji = require('node-emoji');
 const TelegrafI18n = require('telegraf-i18n');
 const Extra = require('telegraf/extra');
@@ -446,33 +446,49 @@ verify.on('callback_query', ctx => {
                         }
                     } else {
                         //User has not voted
-                        console.log("[INFO] - User has not voted, registering...");
+                        console.log("[INFO] - UNI User found but has not voted, registering...");
 
-                        let item = {
-                            TableName: 'voter_email',
+                        let storeVote = {
+                            TableName: 'votes',
                             Item: {
-                                "user": ctx.session.emailUser,
-                                "has_voted": 1
+                                "id": uuidv1(),
+                                "question1": ctx.session.vote1,
+                                "question2": ctx.session.vote2
                             }
                         };
-
-                        console.log("Adding a new item...");
-                        docClient.put(item, function (err, data) {
+                        docClient.put(storeVote, function (err, data) {
                             if (err) {
-                                console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+                                console.error("Unable to add vote. Error JSON:", JSON.stringify(err, null, 2));
                             } else {
-                                console.log("Added item:", JSON.stringify(data, null, 2));
+                                sendVoteToAuthorities(ctx).then(function(ko, ok){
+                                    if(ko){
+                                        console.error("ERROR while trying to send email to authorities")
+                                    }else {
+                                        let item = {
+                                            TableName: 'voter_email',
+                                            Item: {
+                                                "user": ctx.session.emailUser,
+                                                "has_voted": 1
+                                            }
+                                        };
+                                        console.log("[INFO] - Registering voter");
+                                        docClient.put(item, function (err, data) {
+                                            if (err) {
+                                                console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+                                            } else {
+                                                ctx.session.emailRaw = null;
+                                                ctx.session.password = null;
+                                                ctx.session.vote1 = null;
+                                                ctx.session.vote2 = null;
+                                                ctx.reply(ctx.i18n.t('thanks'));
+                                                ctx.scene.enter('voted')
 
+                                            }
+                                        });
+                                    }
 
-                                //TODO: STORE THE VOTE AND EMAIL AUTHORITIES
+                                });
 
-
-                                ctx.session.emailRaw = null;
-                                ctx.session.password = null;
-                                ctx.session.vote1 = null;
-                                ctx.session.vote2 = null;
-                                ctx.reply(ctx.i18n.t('thanks'));
-                                ctx.scene.enter('voted')
 
                             }
                         });
@@ -482,34 +498,51 @@ verify.on('callback_query', ctx => {
                 } else {
                     //No email found, creating record.
                     //User has not voted
-                    console.log("[INFO] - User has not voted, registering...");
-
-                    let item = {
-                        TableName: 'voter_email',
+                    console.log("[INFO] - UNI User not found, registering...");
+                    let storeVote = {
+                        TableName: 'votes',
                         Item: {
-                            "user": ctx.session.emailUser,
-                            "has_voted": 1
+                            "id": uuidv1(),
+                            "question1": ctx.session.vote1,
+                            "question2": ctx.session.vote2
                         }
                     };
-
-                    console.log("Adding a new item...");
-                    docClient.put(item, function (err, data) {
+                    docClient.put(storeVote, function (err, data) {
                         if (err) {
-                            console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-                        } else {
-                            console.log("Added item:", JSON.stringify(data, null, 2));
+                            console.error("Unable to add vote. Error JSON:", JSON.stringify(err, null, 2));
+                        }else{
+                            sendVoteToAuthorities(ctx).then(function(ko, ok){
+                                if(ko){
+                                    console.error("ERROR while trying to send email to authorities")
+                                }else {
 
+                                    let item = {
+                                        TableName: 'voter_email',
+                                        Item: {
+                                            "user": ctx.session.emailUser,
+                                            "has_voted": 1
+                                        }
+                                    };
 
-                            //TODO: STORE THE VOTE AND EMAIL AUTHORITIES
+                                    console.log("Adding a new item...");
+                                    docClient.put(item, function (err, data) {
+                                        if (err) {
+                                            console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+                                        } else {
+                                            console.log("Added item:", JSON.stringify(data, null, 2));
+                                            ctx.session.emailRaw = null;
+                                            ctx.session.password = null;
+                                            ctx.session.vote1 = null;
+                                            ctx.session.vote2 = null;
+                                            ctx.reply(ctx.i18n.t('thanks'));
+                                            ctx.scene.enter('voted')
 
+                                        }
+                                    });
 
-                            ctx.session.emailRaw = null;
-                            ctx.session.password = null;
-                            ctx.session.vote1 = null;
-                            ctx.session.vote2 = null;
-                            ctx.reply(ctx.i18n.t('thanks'));
-                            ctx.scene.enter('voted')
+                                }
 
+                            })
                         }
                     });
                 }
@@ -531,7 +564,6 @@ verify.on('callback_query', ctx => {
                 }
             };
             db.getItem(query, function (err, data) {
-                console.log("[INFO] - Email query succeeded.");
                 if (err) {
                     console.error("[INFO] - Email unable to query. Error:", JSON.stringify(err, null, 2));
                 } else if (data.Item) {
@@ -542,40 +574,54 @@ verify.on('callback_query', ctx => {
 
                     } else {
                         //User has not voted
-
-                        let item = {
-                            TableName: 'voter_email',
-                            Key: {
-                                'user': ctx.session.email
-                            },
-                            UpdateExpression: "set has_voted = :hv",
-                            ExpressionAttributeValues: {
-                                ":hv": 1
-                            },
-                            ReturnValues: "UPDATED_NEW"
+                        console.log("[INFO] - EXT User found and has not voted, registering...");
+                        let storeVote = {
+                            TableName: 'votes',
+                            Item: {
+                                "id": uuidv1(),
+                                "question1": ctx.session.vote1,
+                                "question2": ctx.session.vote2
+                            }
                         };
-                        console.log(JSON.stringify(item));
-
-                        console.log("Updating the item...");
-                        docClient.update(item, function (err, data) {
+                        docClient.put(storeVote, function (err, data) {
                             if (err) {
-                                console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
-                            } else {
-                                console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+                                console.error("Unable to add vote. Error JSON:", JSON.stringify(err, null, 2));
+                            }else{
+                                sendVoteToAuthorities(ctx).then(function(ko, ok) {
+                                    if (ko) {
+                                        console.error("ERROR while trying to send email to authorities")
+                                    }else{
+                                        let item = {
+                                            TableName: 'voter_email',
+                                            Key: {
+                                                'user': ctx.session.email
+                                            },
+                                            UpdateExpression: "set has_voted = :hv",
+                                            ExpressionAttributeValues: {
+                                                ":hv": 1
+                                            },
+                                            ReturnValues: "UPDATED_NEW"
+                                        };
 
+                                        console.log("Updating the item...");
+                                        docClient.update(item, function (err, data) {
+                                            if (err) {
+                                                console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+                                            } else {
+                                                console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+                                                ctx.session.emailRaw = null;
+                                                ctx.session.password = null;
+                                                ctx.session.vote1 = null;
+                                                ctx.session.vote2 = null;
+                                                ctx.reply(ctx.i18n.t('thanks'));
+                                                ctx.scene.enter('voted');
+                                            }
+                                        });
 
-                                //TODO: STORE THE VOTE AND EMAIL AUTHORITIES
-
-
-                                ctx.session.emailRaw = null;
-                                ctx.session.password = null;
-                                ctx.session.vote1 = null;
-                                ctx.session.vote2 = null;
-                                ctx.reply(ctx.i18n.t('thanks'));
-                                ctx.scene.enter('voted');
+                                    }
+                                })
                             }
                         });
-
                     }
 
                 }

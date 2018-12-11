@@ -30,6 +30,7 @@
     "telegraf": "^3.25.0",
     "telegraf-i18n": "^6.4.0",
     "telegraf-session-local": "0.0.6",
-    "underscore": "^1.9.1"
+    "underscore": "^1.9.1",
+    "uuid": "^3.3.2"
   }
 }
