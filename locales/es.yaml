@@ -35,7 +35,7 @@ emailBody: "¡Hola! Tu código de verificación es: "
 unexpectedEmail: "¡UPS! Eso no me lo esperaba. Necesito un correo con un formato correcto."
 unexpectedVote: "¡UPS! Eso no me lo esperaba. Pulsa alguno de los botones anteriores."
 
-results: "Aquí están los resultados: "
+results: ":arrow_forward:Participantes en la consulta: ${total_voters}\n\n:arrow_forward:¿Estás a favor de cambiar la monarquía por una república como forma de Estado?\n  :white_check_mark: Sí: ${q1Yes}\n  :x: No: ${q1No}\n  :black_circle_for_record: Abstenciones: ${q1Abs}\n\n:arrow_forward:¿Estás a favor de la apertura de procesos constituyentes para decidir qué tipo de república?\n  :white_check_mark: Sí: ${q2Yes}\n  :x: No: ${q2No}\n  :black_circle_for_record: Abstenciones: ${q2Abs}"
 resultsNot: "Ey, la votación aún no ha acabado. Al finalizar te podré mostrar los resultados."
 
 

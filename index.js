@@ -21,6 +21,15 @@ AWS.config.update({region: 'eu-west-1'});
 const db = new AWS.DynamoDB;
 const docClient = new AWS.DynamoDB.DocumentClient();
 
+let GresultsGenerated = false;
+let GtotalVotes = null;
+let Gq1Yes = null;
+let Gq1No = null;
+let Gq1Abs = null;
+let Gq2Yes = null;
+let Gq2No = null;
+let Gq2Abs = null;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Pick language Scene
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -417,7 +426,6 @@ verify.on('callback_query', ctx => {
         ctx.answerCbQuery("Sí");
 
 
-
         //----------------------------VOTER TYPE 0 - UNI----------------------------
         if (ctx.session.voterType === 0) {
             console.log("[INFO] - Verify, voter type 0");
@@ -460,10 +468,10 @@ verify.on('callback_query', ctx => {
                             if (err) {
                                 console.error("Unable to add vote. Error JSON:", JSON.stringify(err, null, 2));
                             } else {
-                                sendVoteToAuthorities(ctx).then(function(ko, ok){
-                                    if(ko){
+                                sendVoteToAuthorities(ctx).then(function (ko, ok) {
+                                    if (ko) {
                                         console.error("ERROR while trying to send email to authorities")
-                                    }else {
+                                    } else {
                                         let item = {
                                             TableName: 'voter_email',
                                             Item: {
@@ -510,11 +518,11 @@ verify.on('callback_query', ctx => {
                     docClient.put(storeVote, function (err, data) {
                         if (err) {
                             console.error("Unable to add vote. Error JSON:", JSON.stringify(err, null, 2));
-                        }else{
-                            sendVoteToAuthorities(ctx).then(function(ko, ok){
-                                if(ko){
+                        } else {
+                            sendVoteToAuthorities(ctx).then(function (ko, ok) {
+                                if (ko) {
                                     console.error("ERROR while trying to send email to authorities")
-                                }else {
+                                } else {
 
                                     let item = {
                                         TableName: 'voter_email',
@@ -549,12 +557,9 @@ verify.on('callback_query', ctx => {
             });
 
 
-
-
-        //----------------------------VOTER TYPE 1 NON UNI----------------------------
+            //----------------------------VOTER TYPE 1 NON UNI----------------------------
         } else if (ctx.session.voterType === 1) {
             console.log("[INFO] - Verify, voter type 1");
-
 
 
             let query = {
@@ -586,11 +591,11 @@ verify.on('callback_query', ctx => {
                         docClient.put(storeVote, function (err, data) {
                             if (err) {
                                 console.error("Unable to add vote. Error JSON:", JSON.stringify(err, null, 2));
-                            }else{
-                                sendVoteToAuthorities(ctx).then(function(ko, ok) {
+                            } else {
+                                sendVoteToAuthorities(ctx).then(function (ko, ok) {
                                     if (ko) {
                                         console.error("ERROR while trying to send email to authorities")
-                                    }else{
+                                    } else {
                                         let item = {
                                             TableName: 'voter_email',
                                             Key: {
@@ -656,7 +661,6 @@ verify.on('message', (ctx) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Blocked because unallowed email Scene
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -667,7 +671,6 @@ blockedEmail.on('message', (ctx) => {
 });
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -699,11 +702,38 @@ closed.on('message', (ctx) => {
 const stage = new Stage();
 
 
-
 //Results handler
 stage.command('resultados', (ctx) => {
-    if (isTimeToClose()) {
-        ctx.reply(Emoji.emojify(ctx.i18n.t('results')));
+    //TODO: Delete negation, this is WHEN it is closed.
+    if (!isTimeToClose()) {
+        if(GresultsGenerated){
+            ctx.reply(Emoji.emojify(ctx.i18n.t('results', {
+                total_voters: GtotalVotes,
+                q1Yes: Gq1Yes,
+                q1No: Gq1No,
+                q1Abs: Gq1Abs,
+                q2Yes: Gq2Yes,
+                q2No: Gq2No,
+                q2Abs: Gq2Abs
+            })));
+        }else{
+            generateResults().then(function(ko, ok){
+                if(ko){
+                    console.error("ERROR generating results");
+                }else{
+                    ctx.reply(Emoji.emojify(ctx.i18n.t('results', {
+                        total_voters: GtotalVotes,
+                        q1Yes: Gq1Yes,
+                        q1No: Gq1No,
+                        q1Abs: Gq1Abs,
+                        q2Yes: Gq2Yes,
+                        q2No: Gq2No,
+                        q2Abs: Gq2Abs
+                    })));
+                }
+            })
+        }
+
     } else {
         ctx.reply(Emoji.emojify(ctx.i18n.t('resultsNot')));
     }
@@ -850,4 +880,139 @@ function isTimeToClose() {
     //console.log("NOW:" + now.toString());
     //console.log("END DATE: "+EndDate.toString());
     return now.isAfter(EndDate)
+}
+
+
+function generateResults(){
+    return new Promise(function (resolve, reject) {
+        let allItems = {
+            TableName: "votes"
+        };
+
+
+        let respQ1yes = {
+            TableName: "votes",
+            FilterExpression: "question1 = :a",
+            ExpressionAttributeValues: {
+                ":a": "Sí"
+            }
+        };
+
+        let respQ1no = {
+            TableName: "votes",
+            FilterExpression: "question1 = :a",
+            ExpressionAttributeValues: {
+                ":a": "No"
+            }
+        };
+
+        let respQ1abs = {
+            TableName: "votes",
+            FilterExpression: "question1 = :a",
+            ExpressionAttributeValues: {
+                ":a": "Abstención"
+            }
+        };
+
+
+        let respQ2yes = {
+            TableName: "votes",
+            FilterExpression: "question2 = :a",
+            ExpressionAttributeValues: {
+                ":a": "Sí"
+            }
+        };
+
+        let respQ2no = {
+            TableName: "votes",
+            FilterExpression: "question2 = :a",
+            ExpressionAttributeValues: {
+                ":a": "No"
+            }
+        };
+
+        let respQ2abs = {
+            TableName: "votes",
+            FilterExpression: "question2 = :a",
+            ExpressionAttributeValues: {
+                ":a": "Abstención"
+            }
+        };
+
+
+        docClient.scan(allItems, function onScan(err, data) {
+            if (err) {
+                console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+                reject()
+            } else {
+                let totalVotes = data.Count;
+
+                docClient.scan(respQ1yes, function onScan(err, data) {
+                    if (err) {
+                        console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+                        reject()
+                    } else {
+                        let q1Yes = data.Count;
+
+                        docClient.scan(respQ1no, function onScan(err, data) {
+                            if (err) {
+                                console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+                                reject()
+                            } else {
+                                let q1No = data.Count;
+
+                                docClient.scan(respQ1abs, function onScan(err, data) {
+                                    if (err) {
+                                        console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+                                        reject()
+                                    } else {
+                                        let q1Abs = data.Count;
+
+                                        docClient.scan(respQ2yes, function onScan(err, data) {
+                                            if (err) {
+                                                console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+                                                reject()
+                                            } else {
+                                                let q2Yes = data.Count;
+
+                                                docClient.scan(respQ2no, function onScan(err, data) {
+                                                    if (err) {
+                                                        console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+                                                        reject()
+                                                    } else {
+                                                        let q2No = data.Count;
+
+                                                        docClient.scan(respQ2abs, function onScan(err, data) {
+                                                            if (err) {
+                                                                console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+                                                                reject()
+                                                            } else {
+                                                                let q2Abs = data.Count;
+
+                                                                GresultsGenerated = true;
+                                                                GtotalVotes = totalVotes;
+                                                                Gq1Yes = q1Yes;
+                                                                Gq1No = q1No;
+                                                                Gq1Abs = q1Abs;
+                                                                Gq2Yes = q2Yes;
+                                                                Gq2No = q2No;
+                                                                Gq2Abs = q2Abs;
+                                                                resolve()
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+    });
+
 }
