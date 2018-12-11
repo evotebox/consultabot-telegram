@@ -435,7 +435,6 @@ verify.on('callback_query', ctx => {
                     console.error("[INFO] - Email unable to query. Error:", JSON.stringify(err, null, 2));
                 } else if (data.Item) {
                     console.log("[INFO] - Domain verified email found... ");
-                    console.log(JSON.stringify(data));
                     if (data.Item.has_voted && data.Item.has_voted.N == 1) {
                         //User has voted
                         ctx.reply(Emoji.emojify(ctx.i18n.t('hasVoted')));
