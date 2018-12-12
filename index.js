@@ -81,6 +81,7 @@ greeter.enter((ctx) => {
     console.log("[INFO] - Greeter scene");
     ctx.reply(Emoji.emojify(ctx.i18n.t('greeting'))).then(function () {
         if (!isTimeToClose()) {
+            ctx.session.emailCount = 0;
             ctx.scene.enter('email');
         } else {
             ctx.reply(Emoji.emojify(ctx.i18n.t('closed')));
@@ -101,6 +102,7 @@ email.on('message', (ctx) => {
     if (ctx.message.text && EmailValidator.validate(ctx.message.text)) {
         ctx.scene.enter('verifyEmail');
         ctx.session.emailRaw = ctx.message.text.toLowerCase();
+
     } else {
         console.log("[INFO] - Wrong email format");
         ctx.reply(Emoji.emojify(ctx.i18n.t('unexpectedEmail')));
@@ -218,8 +220,15 @@ verifyEmail.on('callback_query', ctx => {
 
                 } else {
                     //Email is not UPV nor authorised. Error and block.
-                    ctx.reply(Emoji.emojify(ctx.i18n.t('emailNotCorrect')));
-                    ctx.scene.enter('blockedEmail');
+                    console.log(ctx.session.emailCount)
+                    ctx.session.emailCount = ctx.session.emailCount + 1;
+                    if(ctx.session.emailCount < 4){
+                        ctx.reply(Emoji.emojify(ctx.i18n.t('emailNotCorrect')));
+                        ctx.scene.enter('email');
+                    }else{
+                        ctx.reply(Emoji.emojify(ctx.i18n.t('tooManyAttempts')));
+                        ctx.scene.enter('blockedEmail');
+                    }
                 }
             })
         }
@@ -666,7 +675,7 @@ verify.on('message', (ctx) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const blockedEmail = new Scene('blockedEmail');
 blockedEmail.on('message', (ctx) => {
-    ctx.reply(Emoji.emojify(ctx.i18n.t('emailNotCorrect')));
+    ctx.reply(Emoji.emojify(ctx.i18n.t('tooManyAttempts')));
 
 });
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

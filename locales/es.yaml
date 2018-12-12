@@ -4,13 +4,14 @@ emailVerify: "Voy a proceder a verificar este correo ${email_verify}. ¿Es corre
 emailVerifyNo: "De acuerdo, vuelve a introducir tu correo por favor."
 
 emailCorrect: "Acabo de enviarte un código a tu correo :smiley:\n¿Puedes decirmelo, por favor? Espero mientras lo localizas."
-emailNotCorrect: "Lo lamento, no puedes votar. Me han programado para ser utilizado únicamente por lxs miembros de la UPV. Siempre podrás consultar los resultados enviando el comando /resultados Que tengas un buen día."
+emailNotCorrect: "Lo lamento, no puedes votar. Me han programado para ser utilizado únicamente por lxs miembros de la UPV.\nSi eres de la UPV pero no tienes una cuenta @upv.es, pásate por los puntos presenciales (enlace)\nSiempre podrás consultar los resultados enviando el comando /resultados Que tengas un buen día."
+emailTooManyAttempts: "Has introducido un correo incorrecto demasiadas veces. Tu usuario ha sido bloqueado por seguridad."
 
 hasVoted: "Tengo apuntado que ya has votado.\nEstoy programado para respetar la máxima: Una persona un voto.\nEl próximo 13 de diciembre estarán los resultados. Pásate de nuevo, envía el comando /resultados y te los muestro. ¡Cuídate!"
 
 passwordCorrect: "Perfecto! Tu email ha sido validado. Hora de votar!"
 passwordNotCorrect: "Parece que tienes problemas para localizar el código correcto. Introduce el código correcto, por favor."
-tooManyAttempts: "Lo lamento, has introducido un código erroneo demasiadas veces. Por seguridad no puedo dejarte continuar."
+tooManyAttempts: "Lo lamento, has introducido un email no válido demasiadas veces. Por seguridad no puedo dejarte continuar."
 
 abs: "Abstención"
 
