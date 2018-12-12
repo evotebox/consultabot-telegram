@@ -1,42 +1,42 @@
-greeting: ":wave: ¡Hola!\nVamos a comprobar que eres miembro de la UPV. Dime tu dirección de email de la universidad, por favor (ponlo en minúsculas):smiley:"
+greeting: ":wave: Hola!\nAra comprovarem que eres membre de la UPV. Dis-me la teua adreça de e-mail de la universitat, per favor (tot en minúscules):smiley:"
 
-emailVerify: "Voy a proceder a verificar este correo ${email_verify}. ¿Es correcto?"
-emailVerifyNo: "De acuerdo, vuelve a introducir tu correo por favor."
+emailVerify: "Ara procediré a verificar aquest e-mail: ${email_verify}. És correcte?"
+emailVerifyNo: "D'acord, torna a introduir el teu e-mail, per favor."
 
-emailCorrect: "Acabo de enviarte un código a tu correo :smiley:\n¿Puedes decirmelo, por favor? Espero mientras lo localizas."
-emailNotCorrect: "Lo lamento, no puedes votar. Me han programado para ser utilizado únicamente por lxs miembros de la UPV. Siempre podrás consultar los resultados enviando el comando /resultados Que tengas un buen día."
+emailCorrect: "Acabe d'enviar-te un codi al teu e-mail:smiley:\nMe'l pots dir, per favor? Espere mentre el localitzes."
+emailNotCorrect: "Ho lamente, no pots votar. M'han programat per ser utilitzat únicament per membres de la UPV. Sempre podràs consultar els resultats enviant el comandament /resultados Que tingues un bon dia."
 
-hasVoted: "Tengo apuntado que ya has votado.\nEstoy programado para respetar la máxima: Una persona un voto.\nEl próximo 13 de diciembre estarán los resultados. Pásate de nuevo, envía el comando /resultados y te los muestro. ¡Cuídate!"
+hasVoted: "Tinc apuntat que ja has votat.\nEstic programat per a respectar la màxima: una persona, un vot.\nEl 13 de desembre a les 20 h estaran els resultats. Torna ací, envia el comandament /resultados i te'ls mostre. Fins prompte!"
 
-passwordCorrect: "Perfecto! Tu email ha sido validado. Hora de votar!"
-passwordNotCorrect: "Parece que tienes problemas para localizar el código correcto. Introduce el código correcto, por favor."
-tooManyAttempts: "Lo lamento, has introducido un código erroneo demasiadas veces. Por seguridad no puedo dejarte continuar."
+passwordCorrect: "Perfecte! El teu e-mail ha estat validat. Hora de votar!"
+passwordNotCorrect: "Pareix que tens problemes per a localitzar el codi correcte. Introdueix el codi correcte, per favor."
+tooManyAttempts: "Ho lamente, has introduït un codi erroni massa vegades. Per seguretat no puc deixar-te continuar."
 
-abs: "Abstención"
+abs: "Abstenció"
 
-vote1: "¿Estás a favor de cambiar la monarquía por una república como forma de Estado?"
-vote2: "¿Estás a favor de la apertura de procesos constituyentes para decidir qué tipo de república?"
+vote1: "Estàs a favor de canviar la monarquia per una república com a forma d'Estat?"
+vote2: "Estàs a favor de l'apertura de processos constituents per a decidir quin tipus de república?"
 
-verify1: "Tu respuesta ha sido: *${vote1}*\n¿Es correcto?"
-verify: "Tus respuestas han sido: *${vote1}* y *${vote2}*\n¿Es correcto?"
+verify1: "La teua resposta ha sigut: *${vote1}*\nÉs correcte?"
+verify: "Les teues respostes han sigut: *${vote1}* i *${vote2}*\nÉs correcte?"
 
 
-thanks: "Gracias por participar. El próximo 13 de diciembre a partir de las 20h estarán listos los resultados. Pásate de nuevo, envía el comando /resultados y te los muestro. ¡Nos vemos!"
+thanks: "Gràcies per participar. El 13 de desembre a partir de les 20 h estaran llestos els resultats. Torna ací, envia el comandament /resultados i te'ls mostre. Fins prompte!"
 
-godmode: "Has accedido a modo Dios. Si puedes leer este mensaje quiere decir que tu usuario es parte de la autoridad censal y estás autorizado a introducir datos censales.\nEsto implica que puedes añadir un correo electrónico especifico para generar un voto.\nCuidado, todo gran poder conlleva una gran responsabilidad."
+godmode: "Has accedit al mode Déu. Si pots llegir aquest missatge vol dir que el teu usuari és part de l'autoritat censal i estàs autoritzat/da a introduir dades censals.\nAçò implica que pots afegir un correu electrònic específic per a generar un vot.\nVes espai, tot gran poder comporta una gran responsabilitat."
 godmode2: "Test"
 
 
 
-emailSubject: "Consulta Modelo Estado en la UPV"
-emailBody: "¡Hola!\nTu código de verificación es: "
+emailSubject: "Consulta Model d'Estat a la UPV"
+emailBody: "Hola! El teu codi de verificació és: "
 
 
-unexpectedEmail: "¡UPS! Eso no me lo esperaba. Necesito un correo con un formato correcto."
-unexpectedVote: "¡UPS! Eso no me lo esperaba. Pulsa alguno de los botones anteriores."
+unexpectedEmail: "UPS! Això no m'ho esperava. Necessite un e-mail amb un format correcte."
+unexpectedVote: "UPS! Això no m'ho esperava. Apreta algun dels botons anteriors."
 
-results: ":arrow_forward:Participantes en la consulta: ${total_voters}\n\n:arrow_forward:¿Estás a favor de cambiar la monarquía por una república como forma de Estado?\n  :white_check_mark: Sí: ${q1Yes}\n  :x: No: ${q1No}\n  :black_circle_for_record: Abstenciones: ${q1Abs}\n\n:arrow_forward:¿Estás a favor de la apertura de procesos constituyentes para decidir qué tipo de república?\n  :white_check_mark: Sí: ${q2Yes}\n  :x: No: ${q2No}\n  :black_circle_for_record: Abstenciones: ${q2Abs}"
-resultsNot: "Ey, la votación aún no ha acabado. Al finalizar te podré mostrar los resultados."
+results: ":arrow_forward:Participants a la consulta: ${total_voters}\n\n:arrow_forward:Estàs a favor de canviar la monarquia per una república com a forma d'Estat?\n  :white_check_mark: Sí: ${q1Yes}\n  :x: No: ${q1No}\n  :black_circle_for_record: Abstencions: ${q1Abs}\n\n:arrow_forward:Estàs a favor de l'apertura de processos constituents per a decidir quin tipus de república?\n  :white_check_mark: Sí: ${q2Yes}\n  :x: No: ${q2No}\n  :black_circle_for_record: Abstencions: ${q2Abs}"
+resultsNot: "Ei, la votació encara no s'ha acabat. Al finalitzar podré mostrar-te els resultats."
 
 
-closed: "Vaya, el tiempo para votar a finalizado. Puedes ver los resultados enviando /resultados."
+closed: "Vaja, el temps per a votar ha finalitzat. Pots vore els resultats enviant /resultados."
