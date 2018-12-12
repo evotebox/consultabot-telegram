@@ -39,4 +39,4 @@ results: ":arrow_forward:Participantes en la consulta: ${total_voters}\n\n:arrow
 resultsNot: "Ey, la votación aún no ha acabado. Al finalizar te podré mostrar los resultados."
 
 
-closed: "Vaya, el tiempo para votar a finalizado. Puedes ver los resultados enviando /resultados."
+closed: "Vaya, el tiempo para votar ha finalizado. Puedes ver los resultados enviando /resultados."
