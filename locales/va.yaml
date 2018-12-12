@@ -1,12 +1,13 @@
-greeting: ":wave: Hola!\nAra comprovarem que eres membre de la UPV. Dis-me la teua adreça de e-mail de la universitat, per favor (tot en minúscules):smiley:"
+greeting: ":wave: Hola!\nAra comprovarem que eres membre de la UPV. Dis-me la teua adreça de e-mail de la universitat, per favor (tot en minúscules):smiley:\nSi eres de la UPV però no tens e-mail de la UPV, acudeix amb el teu mòbil als punts presencials: http://bit.ly/ConsultaSobreLaMonarquiaALaUPV-Guia"
 
 emailVerify: "Ara procediré a verificar aquest e-mail: ${email_verify}. És correcte?"
 emailVerifyNo: "D'acord, torna a introduir el teu e-mail, per favor."
 
 emailCorrect: "Acabe d'enviar-te un codi al teu e-mail:smiley:\nMe'l pots dir, per favor? Espere mentre el localitzes."
-emailNotCorrect: "Ho lamente, no pots votar. M'han programat per ser utilitzat únicament per membres de la UPV. Sempre podràs consultar els resultats enviant el comandament /resultados Que tingues un bon dia."
+emailNotCorrect: "Ho lamente, no pots votar amb eixe e-mail. Si tens un altre e-mail introdueix-lo. M'han programat per ser utilitzat únicament per membres de la UPV.\nSi eres de la UPV però no tens un compte @upv.es, acudeix als punts presencials http://bit.ly/ConsultaSobreLaMonarquiaALaUPV-Guia \nSempre podràs consultar els resultats enviant el comandament /resultados Que tingues un bon dia."
+emailTooManyAttempts: "Has introduït un e-mail incorrecte massa vegades. El teu usuari ha estat bloquejat per seguretat."
 
-hasVoted: "Tinc apuntat que ja has votat.\nEstic programat per a respectar la màxima: una persona, un vot.\nEl 13 de desembre a les 20 h estaran els resultats. Torna ací, envia el comandament /resultados i te'ls mostre. Fins prompte!"
+hasVoted: "Tinc apuntat que ja has votat.\nEstic programat per a respectar la màxima: una persona, un vot.\nEl 13 de desembre a les 20 h estaran els resultats. Torna per ací, envia el comandament /resultados i te'ls mostre. Fins prompte!"
 
 passwordCorrect: "Perfecte! El teu e-mail ha estat validat. Hora de votar!"
 passwordNotCorrect: "Pareix que tens problemes per a localitzar el codi correcte. Introdueix el codi correcte, per favor."
@@ -21,7 +22,7 @@ verify1: "La teua resposta ha sigut: *${vote1}*\nÉs correcte?"
 verify: "Les teues respostes han sigut: *${vote1}* i *${vote2}*\nÉs correcte?"
 
 
-thanks: "Gràcies per participar. El 13 de desembre a partir de les 20 h estaran llestos els resultats. Torna ací, envia el comandament /resultados i te'ls mostre. Fins prompte!"
+thanks: "Gràcies per participar. El 13 de desembre a partir de les 20 h estaran llestos els resultats. Torna per ací, envia el comandament /resultados i te'ls mostre. Fins prompte!"
 
 godmode: "Has accedit al mode Déu. Si pots llegir aquest missatge vol dir que el teu usuari és part de l'autoritat censal i estàs autoritzat/da a introduir dades censals.\nAçò implica que pots afegir un correu electrònic específic per a generar un vot.\nVes espai, tot gran poder comporta una gran responsabilitat."
 godmode2: "Test"
