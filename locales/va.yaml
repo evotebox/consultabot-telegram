@@ -29,7 +29,7 @@ godmode2: "Test"
 
 
 emailSubject: "Consulta Modelo Estado en la UPV"
-emailBody: "¡Hola! Tu código de verificación es: "
+emailBody: "¡Hola!\nTu código de verificación es: "
 
 
 unexpectedEmail: "¡UPS! Eso no me lo esperaba. Necesito un correo con un formato correcto."

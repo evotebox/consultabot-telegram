@@ -800,8 +800,28 @@ function sendEmail(ctx) {
                 Body: {
                     Text: {
                         Charset: "UTF-8",
-                        //TODO: Add GDPR footer
-                        Data: ctx.i18n.t('emailBody') + ctx.session.password
+                        Data: ctx.i18n.t('emailBody') + ctx.session.password +"\n\n\n" +
+                            "---------------------------------------------------------------\n"+
+                            "Políticas de Privacidad “Consulta Modelo de Estado en la UPV”\n" +
+                            "\n" +
+                            "1.-Tratamos tus datos.\n" +
+                            "Somos una plataforma integrada por alumnado, profesorado y personal de administración y servicios de la Universitat Politècnica de València, que participan a título individual como miembros de la comunidad universitaria para convocar una consulta de opinión sobre el modelo de estado en España. Nuestros datos de contacto son: Plataforma pel referèndum a la UPV (consultamodelestatalaupv@evotebox.es).\n" +
+                            "2. ¿Para qué tratamos sus datos?\n" +
+                            "Tratamos tus datos para convocar una consulta de opinión sobre el modelo de estado en España. Hemos diseñado un sistema que funciona para que puedas votar garantizando un voto individual, libre y secreto.\n" +
+                            "3. Como vas a votar.\n" +
+                            "La consulta se realizará a través de la plataforma Telegram mediante un bot (consultamodelestatalaUPVbot). Para participar en la consulta se utilizará tu dirección de correo electrónico de la UPV para comprobar que eres miembro de la comunidad universitaria y que se cumple el principio “una persona un voto”. Para ello, te enviaremos un número de cuatro cifras que deberás introducir en el bot. Una vez validado el número el sistema te planteará la primera pregunta (“¿Estás a favor de cambiar la monarquía por una república como forma de Estado?”) y te ofrecerá tres posibles respuestas (“Sí”, “No”, “Abstención”). En caso de contestar afirmativamente, el bot te planteará una segunda pregunta (“¿Estás a favor de abrir procesos constituyentes para decidir qué tipo de república?”) ofreciéndote las mismas opciones de respuesta. Antes de proceder a registrar las respuestas el bot te pedirá que las valides. A partir de ahí, el sistema almacenará de forma encriptada tu dirección de correo para proteger tus datos personales en la nube y almacenará tus respuestas separadamente para garantizar el voto anónimo.\n" +
+                            "Para aquellas personas que trabajan en la UPV y no son personal de la universidad se ha habilitado un mecanismo para que puedan participar de la consulta en igualdad de condiciones que el resto de miembros de la comunidad universitaria. Para ello, deberán proporcionar su NIF y una cuenta personal de correo electrónico. A partir de ahí, el procedimiento de voto es el mismo que para el resto de miembros de la comunidad universitaria. Tanto el NIF como la dirección de correo electrónico se almacenan de forma encriptada y las respuestas se registrarán de forma anónima.\n" +
+                            "De esta forma, nuestro procedimiento asegura que sólo puedan votar las personas con derecho a ello con las debidas medidas de seguridad.\n" +
+                            "3. Con qué base tratamos tus datos.\n" +
+                            "Únicamente tratamos tus datos de identificación, cuenta de correo electrónico o NIF, para que puedas usar nuestro bot para participar. Que usemos tus datos depende de que manifiestes tu consentimiento al aceptar el inicio del procedimiento de voto en nuestro bot.\n" +
+                            "4. Destinatarios de tus datos.\n" +
+                            "No cedemos tus datos a ningún tercero. Nuestros sistemas están alojados en un proveedor de servicios con las garantías del Reglamento General de Protección de Datos (Amazon Web Services con tratamiento en Irlanda). Amazon Web Services dispone de la certificación ISO 27018 (https://d1.awsstatic.com/certifications/iso_27018_certification.pdf). La norma ISO 27018 (https://www.iso.org/standard/61498.html) es un código de conducta diseñado para proteger datos personales en la nube. Se basa en la norma sobre seguridad de la información 27002 y proporciona asesoramiento en materia de implementación en lo referente a los controles de la norma 27002 aplicables a la información personalmente identificable (PII). Además, proporciona un conjunto de controles adicionales y asesoramiento relacionado a fin de satisfacer los requisitos de protección de la información personalmente identificable en la nube no cubiertos por el conjunto de controles existentes de la norma ISO 27002.\n" +
+                            "5. Cancelación de tus datos.\n" +
+                            "Una vez finalizado el proceso no usaremos más tus datos. La Ley española de protección de datos obliga a mantenerlos bloqueados durante tres años para verificar nuestra responsabilidad por los tratamientos. En ese periodo, no estarán accesibles a ningún usuario y no será tratados, salvo por el administrador para facilitarlos si le fueran requeridos.\n" +
+                            "6. Qué derechos tienes.\n" +
+                            "Puedes ejercer tus derechos de acceso, rectificación, supresión, portabilidad, limitación u oposición al tratamiento escribiéndonos al correo electrónico (consultamodelestatalaupv_rgpd@evotebox.es) desde una cuenta de la UPV o indicando tu NIF si eres personal de empresas prestadoras de servicios a la Universitat Politècnica de València.\n" +
+                            "7. Ante quién puedo reclamar.\n" +
+                            "En caso de que desees presentar una reclamación u obtener información adicional sobre la regulación del tratamiento de datos personales en España, la autoridad competente es la Agencia Española de Protección de Datos (Jorge Juan, 6 28001-Madrid)."
                     }
                 },
                 Subject: {
